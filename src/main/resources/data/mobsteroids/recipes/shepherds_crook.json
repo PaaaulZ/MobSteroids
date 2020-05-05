@@ -1,0 +1,19 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+      "AAs",
+      "A s",
+      "  s"
+    ],
+    "key": {
+      "s": {
+        "item": "minecraft:stick"
+      },
+      "A": {
+        "item": "minecraft:andesite"
+      }
+    },
+    "result": {
+      "item": "mobsteroids:shepherds_crook"
+    }
+  }

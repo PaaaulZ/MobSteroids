@@ -1,5 +1,6 @@
 package com.paaaulz.mobsteroids;
 
+import com.paaaulz.mobsteroids.items.BuffSteroid;
 import com.paaaulz.mobsteroids.items.ShepherdsCrook;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -13,4 +14,5 @@ public class ModItems
     public static final List<Object> ITEMS = new ArrayList<Object>();
 
     public static final Item SHEPHERDSCROOK = new ShepherdsCrook(ItemTier.WOOD, 0, -2.4F, (new Item.Properties()).group(ItemGroup.TOOLS));
+    public static final Item BUFFSTEROID = new BuffSteroid(new Item.Properties().maxStackSize(64).group(ItemGroup.MISC));
 }
