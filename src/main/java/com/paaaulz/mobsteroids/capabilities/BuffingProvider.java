@@ -9,6 +9,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +21,8 @@ public class BuffingProvider<T> implements ICapabilitySerializable<CompoundNBT>
 
     @CapabilityInject(IBuffing.class)
     public static Capability<IBuffing> BUFF_CAP = null;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
 
 
@@ -43,26 +47,17 @@ public class BuffingProvider<T> implements ICapabilitySerializable<CompoundNBT>
     @Override
     public CompoundNBT serializeNBT()
     {
-        INBT test = BUFF_CAP.getStorage().writeNBT(BUFF_CAP, this.instance, null);
-        CompoundNBT compound = new CompoundNBT();
-        compound.put(Reference.MOD_ID, test);
-        //return BUFF_CAP.getStorage().writeNBT(BUFF_CAP, this.instance, null);
-        CompoundNBT serializedNBT = new CompoundNBT();
-        /*for (IBuffing cap : capabilities) {
-            if (cap instanceof IBuffing)
-            {
-                ICapabilitySerializable serializableCap = (ICapabilitySerializable) cap;
-                serializedNBT.put("buffing", serializableCap.serializeNBT());
-            }
-        }*/
-        return compound;
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putInt("growState", instance.getGrowState());
+        return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt)
     {
-        BUFF_CAP.getStorage().readNBT(BUFF_CAP, this.instance, null, nbt);
+        instance.setGrowState(nbt.getInt("growState"));
     }
+
 }
 
 

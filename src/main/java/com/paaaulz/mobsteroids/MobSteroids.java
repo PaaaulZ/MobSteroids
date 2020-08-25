@@ -3,6 +3,8 @@ package com.paaaulz.mobsteroids;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.paaaulz.mobsteroids.capabilities.*;
+import com.paaaulz.mobsteroids.network.PacketExample;
+import com.paaaulz.mobsteroids.network.PacketHandler;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Tessellator;
@@ -43,6 +45,13 @@ public class MobSteroids
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        PacketHandler.INSTANCE.registerMessage(
+                PacketHandler.increaseId(),
+                PacketExample.class,
+                PacketExample::encode,
+                PacketExample::decode,
+                PacketExample.Handler::handle
+        );
     }
 
     @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
@@ -76,14 +85,14 @@ public class MobSteroids
             //IRenderTypeBuffer buffer = IRenderTypeBuffer.func_228455_a_(Tessellator.getInstance().getBuffer());
 
             Entity entity = e.getEntity();
-            boolean enabled = false;
+            boolean enabled = true;
             if (entity instanceof CowEntity && enabled)
             {
                 MatrixStack stack = e.getMatrixStack();
                 //AxisAlignedBB oldBB = entity.getBoundingBox();
                 IBuffing buffs = entity.getCapability(BuffingProvider.BUFF_CAP, null).orElseThrow(() -> new IllegalArgumentException("Invalid LazyOptional, must not be empty"));
                 int currentGrowState = buffs.getGrowState();
-                stack.func_227862_a_((float) currentGrowState, (float) currentGrowState, (float) currentGrowState);
+                stack.func_227862_a_((float) currentGrowState/2, (float) currentGrowState/2, (float) currentGrowState/2);
                 //stack.func_227862_a_(6.0F, 6.0F, 6.0F);
                 // Need an NBT tag for the bounding box
                 // Removing those 3 comments will make the bounding box grow every time I try to render the entity to infinite.

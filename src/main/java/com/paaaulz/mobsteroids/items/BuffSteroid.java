@@ -1,52 +1,25 @@
 package com.paaaulz.mobsteroids.items;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.paaaulz.mobsteroids.MobSteroids;
 import com.paaaulz.mobsteroids.ModItems;
 import com.paaaulz.mobsteroids.Reference;
-import com.paaaulz.mobsteroids.capabilities.BuffStorage;
-import com.paaaulz.mobsteroids.capabilities.Buffing;
 import com.paaaulz.mobsteroids.capabilities.BuffingProvider;
 import com.paaaulz.mobsteroids.capabilities.IBuffing;
-import jdk.internal.dynalink.linker.LinkerServices;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.command.arguments.NBTCompoundTagArgument;
-import net.minecraft.entity.EntityType;
+import com.paaaulz.mobsteroids.network.PacketExample;
+import com.paaaulz.mobsteroids.network.PacketHandler;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.NBTTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.sound.SoundEvent;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 
-import java.io.DataOutput;
-import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
 public class BuffSteroid extends Item
 {
@@ -63,12 +36,17 @@ public class BuffSteroid extends Item
     public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker)
     {
         //target.playSound(SoundEvents.ENTITY_COW_HURT,6.0F,0.5F);
-        //IBuffing buffs = (IBuffing) target.getCapability(BuffingProvider.BUFF_CAP, null);
         LazyOptional<IBuffing> cap = target.getCapability(BuffingProvider.BUFF_CAP, null);
         IBuffing buffs = cap.orElseThrow(() -> new IllegalArgumentException("Invalid LazyOptional, must not be empty"));
         buffs.grow(1);
-        //buffs.setGrowState(777);
-        //LOGGER.info("GROW STATE SET TO 777");
+        // send update packet to player
+        Supplier<ServerPlayerEntity> attackerToSupplier = new Supplier<ServerPlayerEntity>() {
+            @Override
+            public ServerPlayerEntity get() {
+                return (ServerPlayerEntity) attacker;
+            }
+        };
+        PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(attackerToSupplier), new PacketExample("growState", buffs.getGrowState(), target.getEntityId()));
         return true;
     }
 
