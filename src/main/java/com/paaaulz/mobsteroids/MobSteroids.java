@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
@@ -92,13 +93,13 @@ public class MobSteroids
                 //AxisAlignedBB oldBB = entity.getBoundingBox();
                 IBuffing buffs = entity.getCapability(BuffingProvider.BUFF_CAP, null).orElseThrow(() -> new IllegalArgumentException("Invalid LazyOptional, must not be empty"));
                 int currentGrowState = buffs.getGrowState();
-                stack.func_227862_a_((float) currentGrowState/2, (float) currentGrowState/2, (float) currentGrowState/2);
-                //stack.func_227862_a_(6.0F, 6.0F, 6.0F);
-                // Need an NBT tag for the bounding box
-                // Removing those 3 comments will make the bounding box grow every time I try to render the entity to infinite.
-                //AxisAlignedBB currentBB = entity.getBoundingBox();
-                //AxisAlignedBB expanded = entity.getBoundingBox().expand(currentBB.getXSize()/oldBB.getXSize(),currentBB.getYSize()/oldBB.getYSize(),currentBB.getZSize()/oldBB.getZSize());
-                //entity.setBoundingBox(expanded);
+                if (currentGrowState > 1)
+                {
+                    // Grow entity and bounding box
+                    stack.func_227862_a_((float) currentGrowState/2, (float) currentGrowState/2, (float) currentGrowState/2);
+                    AxisAlignedBB expanded = entity.getBoundingBox().expand(1,1,1);
+                    entity.setBoundingBox(expanded);
+                }
 
             }
         }
@@ -108,31 +109,6 @@ public class MobSteroids
         {
             // if buffed animal change pitch.
         }
-
-        /*@SubscribeEvent
-        public static void postRenderLiving(final RenderLivingEvent.Post<CowEntity, CowModel<CowEntity>> e)
-        {
-        }*/
-
-        /*
-        @SubscribeEvent
-        public void spawnentity(LivingSpawnEvent.CheckSpawn event) {
-
-            LOGGER.info("spawnentity per favore funziona");
-
-        }
-
-        @SubscribeEvent
-        public static void constructing(final EntityEvent.EntityConstructing e)
-        {
-            LOGGER.info("constructing per favore funziona");
-        }
-
-        @SubscribeEvent
-        public static void entering(final EntityEvent.EnteringChunk e)
-        {
-            LOGGER.info("entering per favore funziona");
-        }*/
     }
 
 }

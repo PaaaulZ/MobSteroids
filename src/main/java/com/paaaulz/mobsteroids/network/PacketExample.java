@@ -40,7 +40,7 @@ public class PacketExample
         buf.writeInt(msg.value);
         buf.writeInt(msg.entityId);
         // SERVER THREAD
-        LOGGER.info("Pacchetto SRV: " + msg.parameter + ":" + msg.value);
+        LOGGER.info("Server packet: " + msg.parameter + ":" + msg.value);
     }
 
     // Called by the game, not you. The packet is decoded by the server and a new 
@@ -74,7 +74,7 @@ public class PacketExample
 
 
                 // RENDER THREAD
-                LOGGER.info("Pacchetto CLT: " + message.parameter + ":" + message.value);
+                LOGGER.info("Client Packet: " + message.parameter + ":" + message.value);
 
                 if (message.parameter.equals("growState"))
                 {
